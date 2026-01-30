@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>鼻鼻養成闖關｜第 1 關（遊戲版 Demo）</title>
+  <style>
+    :root{
+      --bg1:#2b1b14;
+      --bg2:#7a4b2b;
+      --panel:#f4e2c8;     /* 米色面板 */
+      --panel2:#f0d6b0;
+      --ink:#1a1412;
+      --muted:#5b4b42;
+      --accent:#ffb23f;   /* 亮橘 */
+      --accent2:#ff7a59;  /* 珊瑚 */
+      --good:#1b7f4b;
+      --bad:#b45309;
+      --shadow: 0 18px 45px rgba(0,0,0,.25);
+      --round:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,"Noto Sans TC","Microsoft JhengHei",Arial,sans-serif;
+      color:var(--ink);
+      min-height:100vh;
+      background:
+        radial-gradient(1200px 600px at 70% -10%, rgba(255,178,63,.25), transparent 65%),
+        radial-gradient(900px 500px at 10% 110%, rgba(255,122,89,.20), transparent 60%),
+        linear-gradient(155deg, var(--bg1), var(--bg2));
+    }
+    .wrap{max-width:980px;margin:0 auto;padding:16px 14px 92px;}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+      color:#fff;margin-bottom:12px
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;
+      font-weight:900;letter-spacing:.4px
+    }
+    .brand .tag{font-size:12px;opacity:.9;background:rgba(255,255,255,.14);padding:6px 10px;border-radius:999px}
+    .btnTiny{
+      border:1px solid rgba(255,255,255,.22);
+      color:#fff;background:rgba(0,0,0,.12);
+      padding:8px 10px;border-radius:14px;cursor:pointer;
+      font-weight:800;font-size:13px
+    }
+    .grid{
+      display:grid;gap:12px;
+      grid-template-columns: 320px 1fr;
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background:linear-gradient(180deg, var(--panel), var(--panel2));
+      border-radius:var(--round);
+      box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.35);
+      overflow:hidden;
+    }
+    .cardPad{padding:14px}
+    .hdrRow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .pill{
+      font-size:12px;font-weight:900;
+      padding:6px 10px;border-radius:999px;
+      background:rgba(0,0,0,.08);
+      color:var(--ink)
+    }
+
+    /* 左側：鼻鼻面板 */
+    .charStage{
+      padding:14px;
+      background:
+        radial-gradient(650px 240px at 50% 10%, rgba(255,255,255,.50), transparent 55%),
+        linear-gradient(180deg, rgba(255,255,255,.15), rgba(0,0,0,.06));
+      position:relative;
+      min-height:520px;
+    }
+    .dayBadge{
+      position:absolute;top:12px;right:12px;
+      background:rgba(0,0,0,.12);
+      color:var(--ink);
+      padding:8px 12px;border-radius:14px;font-weight:1000
+    }
+    .stats{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:10px;
+    }
+    .statBox{
+      background:rgba(255,255,255,.55);
+      border:1px solid rgba(0,0,0,.05);
+      border-radius:16px;
+      padding:10px 10px;
+    }
+    .statName{font-size:12px;color:var(--muted);font-weight:900}
+    .statVal{font-size:16px;font-weight:1000;margin-top:4px}
+    .bar{
+      height:10px;border-radius:999px;background:rgba(0,0,0,.12);overflow:hidden;margin-top:8px
+    }
+    .bar > div{height:100%;width:40%;background:linear-gradient(90deg, var(--accent), var(--accent2));border-radius:999px}
+
+    .bibi{
+      margin:12px auto 0;
+      width:210px;height:210px;border-radius:26px;
+      background:
+        radial-gradient(120px 120px at 40% 35%, rgba(255,255,255,.95), rgba(255,255,255,.35) 60%, rgba(0,0,0,.05) 100%),
+        linear-gradient(145deg, rgba(255,255,255,.55), rgba(0,0,0,.08));
+      border:1px solid rgba(0,0,0,.06);
+      box-shadow:0 18px 35px rgba(0,0,0,.18);
+      position:relative;
+      display:flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      user-select:none;
+    }
+    .bibi::before{
+      content:"BI-BI";
+      font-weight:1000;
+      letter-spacing:1px;
+      color:rgba(0,0,0,.25);
+      font-size:18px;
+    }
+    .bibiMood{
+      position:absolute;bottom:10px;right:10px;
+      font-size:22px;
+      background:rgba(255,255,255,.7);
+      border:1px solid rgba(0,0,0,.08);
+      padding:6px 10px;border-radius:999px;
+    }
+
+    .bubble{
+      margin:12px auto 0;
+      width:100%;
+      background:rgba(255,255,255,.70);
+      border:1px solid rgba(0,0,0,.07);
+      border-radius:18px;
+      padding:12px 12px;
+      position:relative;
+    }
+    .bubble::after{
+      content:"";
+      position:absolute;
+      left:38px; top:-8px;
+      width:16px; height:16px;
+      background:rgba(255,255,255,.70);
+      border-left:1px solid rgba(0,0,0,.07);
+      border-top:1px solid rgba(0,0,0,.07);
+      transform:rotate(45deg);
+    }
+    .bubbleTitle{font-weight:1000;margin-bottom:6px}
+    .bubbleText{font-size:14px;line-height:1.5;color:var(--ink)}
+    .bubbleBtns{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+    .btn{
+      border:0;cursor:pointer;
+      padding:10px 12px;border-radius:14px;font-weight:1000;
+      background:linear-gradient(90deg, var(--accent), var(--accent2));
+      color:#2b1b14;
+      box-shadow:0 14px 25px rgba(255,178,63,.25);
+    }
+    .btnGhost{
+      border:1px solid rgba(0,0,0,.14);
+      background:rgba(255,255,255,.55);
+      color:var(--ink);
+      padding:10px 12px;border-radius:14px;font-weight:1000;
+      cursor:pointer;
+    }
+    .btn:disabled,.btnGhost:disabled{opacity:.55;cursor:not-allowed}
+
+    /* 右側：任務區 */
+    .tabs{
+      display:flex;gap:10px;flex-wrap:wrap;
+      padding:12px 14px;
+      background:rgba(0,0,0,.08);
+      border-bottom:1px solid rgba(255,255,255,.18);
+    }
+    .tab{
+      padding:8px 12px;border-radius:14px;
+      font-weight:1000;font-size:13px;
+      border:1px solid rgba(0,0,0,.10);
+      background:rgba(255,255,255,.35);
+      cursor:pointer;
+    }
+    .tab.active{
+      background:rgba(255,255,255,.72);
+      border-color:rgba(0,0,0,.18);
+    }
+    .pane{display:none}
+    .pane.active{display:block}
+    .sectionTitle{font-weight:1000;margin:0 0 6px}
+    .sub{font-size:12px;color:var(--muted);line-height:1.45;margin:0}
+    .task{
+      background:rgba(255,255,255,.58);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:18px;
+      padding:12px;
+      margin:12px 0;
+    }
+    .taskHead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+    .badge{
+      font-size:12px;font-weight:1000;
+      padding:6px 10px;border-radius:999px;
+      background:rgba(0,0,0,.08);
+    }
+    .taskLock{opacity:.55}
+    .q{
+      margin-top:10px;
+      padding:10px;
+      border-radius:16px;
+      border:1px solid rgba(0,0,0,.08);
+      background:rgba(255,255,255,.60);
+    }
+    .qtitle{font-weight:1000;margin-bottom:8px}
+    label{display:block;margin:6px 0;font-size:14px}
+    .resultLine{margin-top:10px;font-weight:1000}
+    .ok{color:var(--good)}
+    .warn{color:var(--bad)}
+    .input{
+      width:100%;
+      padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(0,0,0,.18);
+      background:rgba(255,255,255,.65);
+      outline:none;font-size:14px
+    }
+    .board{
+      width:100%;
+      border-collapse:collapse;
+      font-size:13px;
+      overflow:hidden;
+      border-radius:16px;
+    }
+    .board th,.board td{
+      padding:10px 8px;
+      border-bottom:1px solid rgba(0,0,0,.06);
+      text-align:left;
+      vertical-align:top;
+    }
+    .board th{background:rgba(255,255,255,.55);font-weight:1000}
+    .boardWrap{
+      background:rgba(255,255,255,.55);
+      border:1px solid rgba(0,0,0,.06);
+      border-radius:18px;
+      overflow:hidden;
+      margin-top:12px;
+    }
+    .toast{
+      position:fixed;left:50%;bottom:80px;transform:translateX(-50%);
+      background:rgba(20,16,14,.92);
+      color:#fff;padding:10px 12px;border-radius:14px;
+      font-size:13px;font-weight:900;
+      opacity:0;pointer-events:none;
+      transition:opacity .18s ease;
+      max-width:min(560px, calc(100% - 24px));
+    }
+    .toast.show{opacity:1}
+    .footerBar{
+      position:fixed;left:0;right:0;bottom:0;
+      background:rgba(20,16,14,.85);
+      backdrop-filter: blur(8px);
+      border-top:1px solid rgba(255,255,255,.12);
+      color:#fff;
+      padding:10px 12px;
+    }
+    .footerInner{
+      max-width:980px;margin:0 auto;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    }
+    .footerPill{
+      background:rgba(255,255,255,.12);
+      padding:6px 10px;border-radius:999px;
+      font-size:12px;font-weight:900;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div style="font-size:18px">鼻鼻養成闖關</div>
+        <div class="tag">遊戲版 Demo｜Day 1</div>
+      </div>
+      <div class="row">
+        <button class="btnTiny" id="btnSetNick">設定暱稱</button>
+        <button class="btnTiny" id="btnSeed">加入 3 位同儕（Demo）</button>
+        <button class="btnTiny" id="btnReset">清空本機資料</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: Character & Stats -->
+      <div class="card">
+        <div class="charStage">
+          <div class="dayBadge" id="dayBadge">Day 1</div>
+
+          <div class="hdrRow">
+            <div class="pill">鼻鼻狀態面板</div>
+            <div class="pill" id="unlockPill">未解鎖</div>
+          </div>
+
+          <div class="stats">
+            <div class="statBox">
+              <div class="statName">健康值（HP）</div>
+              <div class="statVal" id="hpText">72</div>
+              <div class="bar"><div id="hpBar"></div></div>
+            </div>
+            <div class="statBox">
+              <div class="statName">親密度（Lv）</div>
+              <div class="statVal" id="lvText">Lv.1</div>
+              <div class="bar"><div id="lvBar"></div></div>
+            </div>
+            <div class="statBox">
+              <div class="statName">EXP</div>
+              <div class="statVal"><span id="expText">0</span></div>
+              <div class="bar"><div id="expBar"></div></div>
+            </div>
+            <div class="statBox">
+              <div class="statName">連續天數（Streak）</div>
+              <div class="statVal" id="streakText">0</div>
+              <div class="bar"><div id="streakBar"></div></div>
+            </div>
+          </div>
+
+          <div class="bibi" id="bibi">
+            <div class="bibiMood" id="mood">😣</div>
+          </div>
+
+          <div class="bubble" id="bubble">
+            <div class="bubbleTitle">鼻鼻</div>
+            <div class="bubbleText" id="bubbleText"></div>
+            <div class="bubbleBtns">
+              <button class="btn" id="btnContinue">繼續</button>
+              <button class="btnGhost" id="btnSkip">跳過對話</button>
+            </div>
+          </div>
+
+          <div class="cardPad" style="padding-top:10px">
+            <div class="sub">暱稱（匿名）：<b id="nickText">未設定</b></div>
+            <div class="sub">User ID：<span id="uidText"></span></div>
+            <div class="sub">提示：點一下鼻鼻，可以聽到不同的鼓勵語（文字）。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Tasks & Leaderboard -->
+      <div class="card">
+        <div class="tabs">
+          <button class="tab active" data-tab="tasks">🧩 今日任務</button>
+          <button class="tab" data-tab="quiz">📝 小測驗</button>
+          <button class="tab" data-tab="leader">🏆 排行榜</button>
+        </div>
+
+        <div class="cardPad">
+
+          <!-- TASKS PANE -->
+          <div class="pane active" id="pane-tasks">
+            <h3 class="sectionTitle">Day 1｜冷氣房生存訓練</h3>
+            <p class="sub">流程：故事 → 影片 → 小測驗通過 → 打卡 +10 EXP（同時更新排行榜）。</p>
+
+            <div class="task" id="task-video">
+              <div class="taskHead">
+                <div>
+                  <div style="font-weight:1000">🎥 任務 1｜觀看影片</div>
+                  <div class="sub">看完後再去「小測驗」回答問題。</div>
+                </div>
+                <div class="badge" id="videoBadge">未完成</div>
+              </div>
+
+              <div style="height:10px"></div>
+              <input class="input" id="videoUrl" placeholder="貼上 YouTube 連結（例：https://youtu.be/....）" />
+              <div style="height:10px"></div>
+              <button class="btn" id="btnOpenVideo">開啟影片（新分頁）</button>
+            </div>
+
+            <div class="task" id="task-checkin">
+              <div class="taskHead">
+                <div>
+                  <div style="font-weight:1000">✅ 任務 2｜完成打卡</div>
+                  <div class="sub">需先通過小測驗才可打卡。</div>
+                </div>
+                <div class="badge" id="checkinBadge">未解鎖</div>
+              </div>
+
+              <div style="height:10px"></div>
+              <button class="btn" id="btnCheckin" disabled>我已完成第 1 關（打卡 +10 EXP）</button>
+              <div class="resultLine" id="todayLine">今日打卡狀態：尚未打卡</div>
+            </div>
+
+            <div class="task">
+              <div class="taskHead">
+                <div>
+                  <div style="font-weight:1000">🧭 你會在後台看到什麼？</div>
+                  <div class="sub">此 Demo 先用本機排行榜（同一台裝置才看得到）。確定玩法後再接雲端後台。</div>
+                </div>
+                <div class="badge">Demo</div>
+              </div>
+              <div class="sub" style="margin-top:10px;line-height:1.55">
+                你會得到：<b>EXP</b>、<b>Streak</b>、以及「同儕排行榜」；  
+                受試者端只看到暱稱，不看到真實身份。
+              </div>
+            </div>
+          </div>
+
+          <!-- QUIZ PANE -->
+          <div class="pane" id="pane-quiz">
+            <h3 class="sectionTitle">小測驗（Day 1）</h3>
+            <p class="sub">通過標準：至少 2/3。通過後解鎖打卡。</p>
+
+            <form id="quizForm">
+              <div class="q">
+                <div class="qtitle">Q1. 在冷氣房中，為什麼鼻子容易覺得乾乾不舒服？</div>
+                <label><input type="radio" name="q1" value="A" required> A. 因為冷氣會讓空氣變乾</label>
+                <label><input type="radio" name="q1" value="B"> B. 因為光線太亮</label>
+                <label><input type="radio" name="q1" value="C"> C. 因為桌椅太硬</label>
+              </div>
+
+              <div class="q">
+                <div class="qtitle">Q2. 在冷氣房覺得鼻子不舒服，哪個做法比較適合？</div>
+                <label><input type="radio" name="q2" value="A" required> A. 直接讓冷氣對著臉吹</label>
+                <label><input type="radio" name="q2" value="B"> B. 調整溫度、注意保濕</label>
+                <label><input type="radio" name="q2" value="C"> C. 喝很多冰水降火氣</label>
+              </div>
+
+              <div class="q">
+                <div class="qtitle">Q3. 下列哪一個是比較好的鼻部日常照護方式？</div>
+                <label><input type="radio" name="q3" value="A" required> A. 一直揉鼻子</label>
+                <label><input type="radio" name="q3" value="B"> B. 規律清潔，必要時可用生理食鹽水</label>
+                <label><input type="radio" name="q3" value="C"> C. 完全不理它</label>
+              </div>
+
+              <button class="btn" type="submit">送出小測驗（解鎖）</button>
+            </form>
+
+            <div class="resultLine" id="quizResultLine">測驗結果：尚未作答</div>
+            <div class="sub" style="margin-top:6px">
+              小提示：通過後回到「今日任務」就能打卡。
+            </div>
+          </div>
+
+          <!-- LEADERBOARD PANE -->
+          <div class="pane" id="pane-leader">
+            <h3 class="sectionTitle">排行榜（本機 Demo）</h3>
+            <p class="sub">排序：總 EXP ↓，Streak ↓。點右上「加入 3 位同儕」可看到競爭效果。</p>
+
+            <div class="boardWrap">
+              <table class="board" id="leaderTable">
+                <thead>
+                  <tr>
+                    <th style="width:60px">排名</th>
+                    <th>暱稱</th>
+                    <th style="width:90px">EXP</th>
+                    <th style="width:90px">Streak</th>
+                    <th style="width:140px">最後活躍</th>
+                  </tr>
+                </thead>
+                <tbody id="leaderBody"></tbody>
+              </table>
+            </div>
+
+            <div class="task" style="margin-top:12px">
+              <div style="font-weight:1000">管理者測試建議</div>
+              <div class="sub" style="margin-top:6px;line-height:1.55">
+                1) 先用 Demo 排行榜確定「成就/獎勵」對青少年有吸引力。<br/>
+                2) 等介面與關卡定稿後，再把事件紀錄改接 Google Sheet（雲端後台）。<br/>
+                3) 排行榜只顯示暱稱，避免個資風險。
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">已完成</div>
+
+  <div class="footerBar">
+    <div class="footerInner">
+      <div class="footerPill">Day 1｜冷氣房生存訓練</div>
+      <div class="footerPill">狀態：<span id="footerStatus">未解鎖</span></div>
+      <div class="footerPill">提示：先完成「小測驗」再打卡</div>
+    </div>
+  </div>
+
+<script>
+  // ===== 本機資料（Demo 用）=====
+  const DB_KEY = "bibi_game_demo_events_v1";
+  const STATE_KEY = "bibi_game_demo_state_v1";
+  const todayKey = () => new Date().toISOString().slice(0,10);
+
+  function toast(msg){
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(()=>t.classList.remove("show"), 1200);
+  }
+
+  function dbLoad(){ try { return JSON.parse(localStorage.getItem(DB_KEY) || "[]"); } catch(e){ return []; } }
+  function dbSave(rows){ localStorage.setItem(DB_KEY, JSON.stringify(rows)); }
+  function stateLoad(){ try { return JSON.parse(localStorage.getItem(STATE_KEY) || "{}"); } catch(e){ return {}; } }
+  function stateSave(s){ localStorage.setItem(STATE_KEY, JSON.stringify(s)); }
+
+  function getOrCreateUserId(){
+    const k = "bibi_user_id";
+    let id = localStorage.getItem(k);
+    if(!id){
+      id = "U" + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+      localStorage.setItem(k, id);
+    }
+    return id;
+  }
+  function getNickname(){ return (localStorage.getItem("bibi_nickname") || "").trim(); }
+  function setNickname(n){ localStorage.setItem("bibi_nickname", (n||"").trim()); }
+
+  function logEvent(event, extra){
+    const row = {
+      ts: new Date().toISOString(),
+      user_id: getOrCreateUserId(),
+      nickname: getNickname(),
+      level: 1,
+      event,
+      ...extra
+    };
+    const rows = dbLoad();
+    rows.push(row);
+    dbSave(rows);
+  }
+
+  // ===== Story (Day 1) =====
+  const story = [
+    "小主人……你來了嗎？",
+    "今天教室冷氣開好強，我的鼻子裡面好乾、好癢，還一直想打噴嚏……",
+    "我真的有點撐不住了。你可以陪我完成今天的任務，幫我變得舒服一點嗎？",
+    "先看一段短影片，然後去小測驗回答問題。通過後就能打卡，加 EXP！"
+  ];
+  let storyIdx = 0;
+
+  function setBubble(text){
+    document.getElementById("bubbleText").textContent = text;
+  }
+
+  function setUnlocked(unlocked){
+    const pill = document.getElementById("unlockPill");
+    const footer = document.getElementById("footerStatus");
+    if(unlocked){
+      pill.textContent = "已解鎖";
+      pill.style.background = "rgba(27,127,75,.18)";
+      footer.textContent = "已解鎖";
+      document.getElementById("mood").textContent = "😊";
+      document.getElementById("checkinBadge").textContent = "可打卡";
+    }else{
+      pill.textContent = "未解鎖";
+      pill.style.background = "rgba(0,0,0,.08)";
+      footer.textContent = "未解鎖";
+      document.getElementById("mood").textContent = "😣";
+      document.getElementById("checkinBadge").textContent = "未解鎖";
+    }
+  }
+
+  function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+
+  function renderBars(exp, streak, hp, lv){
+    document.getElementById("expBar").style.width = clamp(exp,0,100) + "%";
+    document.getElementById("streakBar").style.width = clamp(streak*10,0,100) + "%";
+    document.getElementById("hpBar").style.width = clamp(hp,0,100) + "%";
+    document.getElementById("lvBar").style.width = clamp(lv*25,0,100) + "%";
+  }
+
+  function render(){
+    const s = stateLoad();
+    const uid = getOrCreateUserId();
+    const nick = getNickname();
+
+    document.getElementById("uidText").textContent = uid;
+    document.getElementById("nickText").textContent = nick || "未設定";
+
+    // defaults
+    if(s.hp === undefined) s.hp = 72;
+    if(s.lv === undefined) s.lv = 1;
+    if(s.exp === undefined) s.exp = 0;
+    if(s.streak === undefined) s.streak = 0;
+
+    // video status
+    document.getElementById("videoBadge").textContent = s.videoOpened ? "已開啟" : "未完成";
+
+    // unlock status
+    setUnlocked(!!s.unlocked);
+
+    // checkin button
+    const checkedToday = (s.lastCheckin === todayKey());
+    const btnCheckin = document.getElementById("btnCheckin");
+    btnCheckin.disabled = (!s.unlocked) || checkedToday;
+    document.getElementById("todayLine").textContent = "今日打卡狀態：" + (checkedToday ? "✅ 已打卡" : "尚未打卡");
+
+    // stats
+    document.getElementById("hpText").textContent = String(s.hp);
+    document.getElementById("lvText").textContent = "Lv." + String(s.lv);
+    document.getElementById("expText").textContent = String(s.exp);
+    document.getElementById("streakText").textContent = String(s.streak);
+    renderBars(s.exp, s.streak, s.hp, s.lv);
+
+    // quiz result
+    document.getElementById("quizResultLine").textContent = "測驗結果：" + (s.quizText || "尚未作答");
+
+    stateSave(s);
+    renderLeaderboard();
+  }
+
+  function renderLeaderboard(){
+    const rows = dbLoad();
+    // build participants summary
+    const m = new Map();
+    for(const r of rows){
+      if(!r.user_id) continue;
+      if(!m.has(r.user_id)){
+        m.set(r.user_id, { user_id:r.user_id, nickname:r.nickname||"", total_exp:0, streak:0, last_seen:r.ts });
+      }
+      const p = m.get(r.user_id);
+      if(r.nickname) p.nickname = r.nickname;
+      if(r.ts && (!p.last_seen || r.ts > p.last_seen)) p.last_seen = r.ts;
+      if(r.event === "checkin"){
+        const te = Number(r.total_exp||0);
+        if(Number.isFinite(te)) p.total_exp = Math.max(p.total_exp, te);
+        const st = Number(r.streak||0);
+        if(Number.isFinite(st)) p.streak = Math.max(p.streak, st);
+      }
+    }
+    const list = Array.from(m.values()).sort((a,b)=>{
+      if(b.total_exp !== a.total_exp) return b.total_exp - a.total_exp;
+      return b.streak - a.streak;
+    });
+
+    const tb = document.getElementById("leaderBody");
+    tb.innerHTML = "";
+    const fmt = (ts)=>{ try { return new Date(ts).toLocaleString(); } catch(e){ return ts||""; } };
+
+    if(list.length === 0){
+      tb.innerHTML = `<tr><td colspan="5" style="padding:14px"><span style="color:rgba(0,0,0,.55);font-weight:900">目前沒有資料。先完成小測驗並打卡，或按「加入 3 位同儕」看效果。</span></td></tr>`;
+      return;
+    }
+
+    list.forEach((p, idx)=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${idx+1}</td>
+        <td>${p.nickname || "<span style='color:rgba(0,0,0,.55);font-weight:900'>未設定</span>"}</td>
+        <td>${p.total_exp}</td>
+        <td>${p.streak}</td>
+        <td><span style="color:rgba(0,0,0,.62)">${fmt(p.last_seen)}</span></td>
+      `;
+      tb.appendChild(tr);
+    });
+  }
+
+  // ===== Tabs =====
+  document.querySelectorAll(".tab").forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+      btn.classList.add("active");
+      const target = btn.dataset.tab;
+      document.querySelectorAll(".pane").forEach(p=>p.classList.remove("active"));
+      document.getElementById("pane-" + target).classList.add("active");
+    });
+  });
+
+  // ===== Story controls =====
+  function startStory(){
+    const s = stateLoad();
+    if(s.storyDone){
+      setBubble("今天我們就照這個流程：影片 → 小測驗 → 打卡。你做得到。");
+      document.getElementById("btnContinue").disabled = true;
+      return;
+    }
+    storyIdx = 0;
+    setBubble(story[0]);
+  }
+
+  document.getElementById("btnContinue").addEventListener("click", ()=>{
+    const s = stateLoad();
+    storyIdx += 1;
+    if(storyIdx >= story.length){
+      s.storyDone = true;
+      stateSave(s);
+      setBubble("任務已開啟！先看影片，再去小測驗。完成後回來打卡。");
+      document.getElementById("btnContinue").disabled = true;
+      toast("任務開啟");
+      return;
+    }
+    setBubble(story[storyIdx]);
+  });
+
+  document.getElementById("btnSkip").addEventListener("click", ()=>{
+    const s = stateLoad();
+    s.storyDone = true;
+    stateSave(s);
+    setBubble("任務已開啟！先看影片，再去小測驗。完成後回來打卡。");
+    document.getElementById("btnContinue").disabled = true;
+    toast("已跳過對話");
+  });
+
+  // Click bibi for random encouragement
+  const cheers = [
+    "我有點乾乾的……你可以幫我嗎？",
+    "如果你完成任務，我會變得更舒服！",
+    "你做得到，我相信你。",
+    "冷氣房真的很容易讓我鼻子不舒服。"
+  ];
+  document.getElementById("bibi").addEventListener("click", ()=>{
+    setBubble(cheers[Math.floor(Math.random()*cheers.length)]);
+    toast("鼻鼻：收到");
+  });
+
+  // ===== Nickname =====
+  function promptNick(){
+    const cur = getNickname();
+    const nick = prompt("請輸入匿名暱稱（例：A01、小美、鼻鼻）", cur || "");
+    if(nick === null) return;
+    setNickname(nick);
+    logEvent("set_nickname", { value: nick });
+    render();
+    toast("已設定暱稱");
+  }
+  document.getElementById("btnSetNick").addEventListener("click", promptNick);
+
+  // ===== Seed demo peers =====
+  document.getElementById("btnSeed").addEventListener("click", ()=>{
+    const bots = [
+      {nickname:"阿阿龍", exp:40, streak:2},
+      {nickname:"小美", exp:60, streak:3},
+      {nickname:"鼻鼻守護者", exp:20, streak:1}
+    ];
+    const rows = dbLoad();
+    const now = Date.now();
+    bots.forEach((b,i)=>{
+      const uid = "BOT_" + (i+1);
+      rows.push({ts:new Date(now - (i+2)*60000).toISOString(), user_id:uid, nickname:b.nickname, level:1, event:"checkin", exp_change:10, total_exp:b.exp, streak:b.streak});
+    });
+    dbSave(rows);
+    renderLeaderboard();
+    toast("已加入同儕（Demo）");
+  });
+
+  // ===== Reset =====
+  document.getElementById("btnReset").addEventListener("click", ()=>{
+    if(!confirm("確定清空本機資料？（會清空排行榜、EXP、打卡與測驗紀錄）")) return;
+    localStorage.removeItem(DB_KEY);
+    localStorage.removeItem(STATE_KEY);
+    render();
+    startStory();
+    document.getElementById("btnContinue").disabled = false;
+    toast("已清空");
+  });
+
+  // ===== Video task =====
+  document.getElementById("btnOpenVideo").addEventListener("click", ()=>{
+    const url = document.getElementById("videoUrl").value.trim();
+    if(!url){ alert("請先貼上影片連結"); return; }
+    window.open(url, "_blank");
+    const s = stateLoad();
+    s.videoOpened = true;
+    stateSave(s);
+    logEvent("video_open", { value:url });
+    render();
+    toast("已記錄：開啟影片");
+  });
+
+  // ===== Quiz =====
+  const ANSWERS = { q1:"A", q2:"B", q3:"B" };
+  const PASS_SCORE = 2;
+
+  document.getElementById("quizForm").addEventListener("submit", (e)=>{
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const answers = { q1: fd.get("q1"), q2: fd.get("q2"), q3: fd.get("q3") };
+    let score = 0;
+    for(const k of ["q1","q2","q3"]) if(answers[k] === ANSWERS[k]) score += 1;
+    const passed = score >= PASS_SCORE;
+
+    const s = stateLoad();
+    s.quizScore = score;
+    s.quizAt = new Date().toISOString();
+    s.unlocked = passed;
+    s.quizText = passed ? `✅ 通過（${score}/3）已解鎖打卡` : `❌ 未通過（${score}/3）請再試一次`;
+    stateSave(s);
+
+    logEvent("quiz_submit", { score, passed: passed ? 1 : 0, answers });
+    render();
+    toast(passed ? "解鎖成功" : "再試一次");
+  });
+
+  // ===== Check-in =====
+  document.getElementById("btnCheckin").addEventListener("click", ()=>{
+    const s = stateLoad();
+    if(!s.unlocked){ alert("需先通過小測驗才能打卡"); return; }
+    if(s.lastCheckin === todayKey()){ alert("今天已打卡"); return; }
+
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0,10);
+    if(s.lastCheckin === yesterday) s.streak = (s.streak||0) + 1;
+    else s.streak = 1;
+
+    s.lastCheckin = todayKey();
+    s.checkinAt = new Date().toISOString();
+    s.exp = (s.exp || 0) + 10;
+
+    // simple level up: every 50 exp +1 lv, hp recover
+    const newLv = 1 + Math.floor((s.exp||0)/50);
+    if(newLv > (s.lv||1)){
+      s.lv = newLv;
+      s.hp = Math.min(100, (s.hp||72) + 8);
+      toast("升級！Lv." + newLv);
+    }else{
+      s.hp = Math.min(100, (s.hp||72) + 3);
+    }
+
+    stateSave(s);
+    logEvent("checkin", { exp_change: 10, total_exp: s.exp, streak: s.streak });
+    render();
+    toast("打卡 +10 EXP");
+  });
+
+  // init
+  startStory();
+  render();
+</script>
+</body>
+</html>
