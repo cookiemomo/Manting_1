@@ -823,5 +823,27 @@
   startStory();
   render();
 </script>
+<!-- 🎵 背景音樂（鼻鼻養成） -->
+<audio id="bgm" loop>
+  <source src="休閒益智遊戲_BGM_調整.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+  const bgm = document.getElementById("bgm");
+
+  // 手機瀏覽器規定：第一次互動後才能播放
+  document.addEventListener("click", () => {
+    if (bgm.paused) {
+      bgm.volume = 0.25; // 建議音量，不吵
+      bgm.play().catch(()=>{});
+    }
+  }, { once: true });
+
+  // 音樂開關（給按鈕用）
+  function toggleMusic(){
+    if (bgm.paused) bgm.play();
+    else bgm.pause();
+  }
+</script>
 </body>
 </html>
